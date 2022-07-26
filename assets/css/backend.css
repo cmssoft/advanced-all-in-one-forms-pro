@@ -45,20 +45,23 @@ ul#sortable1 li {
 .card label {
     margin: 0px 10px 10px 0px;
     display: block;
-    width: 13%;
+    width: 20%;
     color: #007cba;
 }
 
-.options_vcf7 .row .col-md-4
-{
-        display: table-cell;
+.options_vcf7.row .col-md-4{
+    display: table-cell;
 }
-.options_vcf7 .row{
+.options_vcf7.row{
     margin: 0px;
 }
-.options_vcf7 .row .cond{
-    width: auto !important;
+.options_vcf7.row .cond{
+    width: 19% !important;
 }
+.add_and_cond,.del_and_cond{
+    margin-left: 5px !important;
+}
+
 .form-group.dropdown_fields {
     margin: 0;
 }
@@ -352,4 +355,7 @@ table.dataTable tbody th, table.dataTable tbody td{
     font-size: 18px;
     line-height: 30px;
     margin:20px 0 0;
+}
+.fill_and{
+    padding: 10px;
 }

@@ -1,16 +1,16 @@
-=== Advanced All In One Forms ===
+=== Advanced All In One Forms - Premium ===
  
 Contributors: cmssoft
 Donate link: https://www.vrinsofts.com/
-Tags: contact, form, contact form, feedback, email, ajax, captcha, akismet, overview, product enquiry, builder form, thank you page.
+Tags: contact, form, contact form, feedback, email, ajax, captcha, akismet, overview, field conditional logic, form templates, product enquiry, builder form, thank you page.
 Requires at least: 5.5
 Tested up to: 6.0
-Stable tag: 1.0.5
+Stable tag: 2.0.0
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
   
-Advanced All In One Forms can manage multiple forms and product inquiry. The form supports Ajax-powered submitting, CAPTCHA, OVERVIEW and so on.
+Advanced All In One Forms can manage multiple forms and product inquiry. The form supports Ajax-powered submitting, CAPTCHA, OVERVIEW, Field Conditional Logic, Form Templates and so on.
   
 == Description ==
 
@@ -142,9 +142,9 @@ Simply deactivate and delete the plugin.
 8. screenshot-8.png
   
 == Changelog ==
-= 1.0.0 =
+= 2.0.0 =
 * Plugin released. 
 
 == Upgrade Notice ==
-= 1.0.4 =
+= 2.0.0 =
 Upgrade notices describe the reason a user should upgrade.

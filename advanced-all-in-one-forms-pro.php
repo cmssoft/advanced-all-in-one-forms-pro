@@ -1,12 +1,12 @@
 <?php
 /**
- * Plugin Name: Advanced All In One Forms
+ * Plugin Name: Advanced All In One Forms - Premium
  * Plugin URI : https://github.com/cmssoft/advanced-all-in-one-forms
- * Description: Advanced All In One Forms can manage multiple forms and product inquiry. The form supports Ajax-powered submitting, CAPTCHA, OVERVIEW and so on.
- * Version: 1.0.5
+ * Description: Advanced All In One Forms can manage multiple forms and product inquiry. The form supports Ajax-powered submitting, CAPTCHA, OVERVIEW, Field Conditional Logic, Form Templates and so on.
+ * Version: 2.0.0
  * Author: cmssoft
  * Author URI : https://github.com/cmssoft/
- * Text Domain : advanced-all-in-one-forms
+ * Text Domain : advanced-all-in-one-forms-pro
 */
 defined( 'ABSPATH' ) OR exit;
 register_activation_hook(   __FILE__, array( 'AAIOF_Alladvancedform', 'aaiof_on_activation' ) );

@@ -3,13 +3,44 @@ namespace AdvancedAllInOneForms;
 if (!defined( 'ABSPATH')) exit;
 if (!class_exists( 'AAIOF_Customfields')){
     class AAIOF_Customfields {
+        public function condition_field($field_in=0, $rand, $field){
+            _e('<div class="form-group">');
+                _e('<label for="class-'.$rand.'">Conditional Logic:</label>');
+
+                _e('<select id="cond-'.$rand.'" name="cond['.$rand.']" class="form-control">
+                    <option value="">Select a condition</option>
+                    <option value="show" '.( isset($field['cond'])&&$field['cond']=='show'?' selected':'' ).'>Show</option>
+                    <option value="hide" '.( isset($field['cond'])&&$field['cond']=='hide'?' selected':'' ).'>Hide</option>
+                </select> &nbsp; If this field match below conditions ');
+            _e('</div>');                               
+            _e('<input id="cond_count_'.$rand.'" type="hidden" value="'.$field_in.'" />');
+            _e('<div id="cond_div_'.$rand.'">');
+                _e('<div id="cond_group_'.$rand.'_'.$field_in.'" class="form-group options_vcf7 row">');
+                    _e('<label for="class-'.$rand.'"></label>');    
+                    _e('<select id="condfield-'.$rand.'-'.$field_in.'" name="condfield['.$rand.'][]" class="form-control col-md-4 cond">
+                        <option value="">Select a field</option>                                    
+                    </select>');
+                    _e('<select id="condmatch-'.$rand.'-'.$field_in.'" name="condmatch['.$rand.'][]" class="form-control col-md-4 cond">
+                        <option value="Equal" '.( isset($field['condmatch'])&&$field['condmatch']=='Equal'?' selected':'' ).'>Equal to</option> 
+                        <option value="NotEqual" '.( isset($field['condmatch'])&&$field['condmatch']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
+                        <option value="IsEmpty" '.( isset($field['condmatch'])&&$field['condmatch']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
+                        <option value="IsNotEmpty" '.( isset($field['condmatch'])&&$field['condmatch']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
+                        <option value="Contains" '.( isset($field['condmatch'])&&$field['condmatch']=='Contains'?' selected':'' ).'>Contains</option> 
+                        <option value="NotContains" '.( isset($field['condmatch'])&&$field['condmatch']=='NotContains'?' selected':'' ).'>Not Contains</option>
+                    </select>');
+                    _e('<input id="condvalue-'.$rand.'-'.$field_in.'" name="condvalue['.$rand.'][]" type="text" placeholder="Enter Value" class="form-control col-md-4 cond" /> <i class="fa fa-question-circle"></i>');                                    
+                    _e('<span class="fill_and">AND</span>');                                    
+                    _e('<button type="button" class="add_and_cond button button-primary" data-rand="'.$rand.'" data-in="'.$field_in.'">+</button>');
+                _e('</div>');                                
+            _e('</div>');
+        }
         public function text($field,$rand){
             $rand = esc_html($rand);
             _e('<li class="ui-state-default card" id="box-'.$rand.'">
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>Text Field</h2>
+                                <h2>Text Field [  '.$rand.'  ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">                    	
                             <button type="button" class="btn btn-link" onclick=remove('.$rand.')><i class="fa fa-remove"></i></button>
@@ -89,33 +120,8 @@ if (!class_exists( 'AAIOF_Customfields')){
                                 <input type="text" class="form-control" id="cl-cls-'.$rand.'" name="cl-cls['.$rand.']" value="'.(isset($field['cl-cls'])?''.$field['cl-cls'].'':"").'">
                             </div>');
                             
-
-
-                            _e('<div class="form-group">
-                                <label for="class-'.$rand.'">Conditions:</label>');
-                                _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                    <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                    <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                                </select> this field if </div>');
-                            _e('</div>');
-                            _e('<div class="form-group options_vcf7">
-                                <label for="class-'.$rand.'"></label>');
-                                _e('<div class="row">
-                                    <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                        <option value="">Select a field</option>                                    
-                                    </select>
-                                    <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                        <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                        <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                        <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                        <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                        <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                        <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                                    </select>
-                                    <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                            _e('</div>'); 
-
-
+                            $this->condition_field(0,$rand,$field);
+                                
                         _e('</div>
                     </div>
                 </li>');
@@ -126,7 +132,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>Description Field</h2>
+                                <h2>Description Field [  '.$rand.'  ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">
                             <button type="button" class="btn btn-link" onclick=remove('.$rand.')><i class="fa fa-remove"></i></button>
@@ -193,31 +199,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                                 <input type="text" class="form-control" id="cl-cls-'.$rand.'" name="cl-cls['.$rand.']" value="'.(isset($field['cl-cls'])?''.$field['cl-cls'].'':"").'">
                             </div>');
 
-
-                            _e('<div class="form-group">
-                                <label for="class-'.$rand.'">Conditions:</label>');
-                                _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                    <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                    <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                                </select> this field if </div>');
-                            _e('</div>');
-                            _e('<div class="form-group options_vcf7">
-                                <label for="class-'.$rand.'"></label>');
-                                _e('<div class="row">
-                                    <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                        <option value="">Select a field</option>                                    
-                                    </select>
-                                    <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                        <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                        <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                        <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                        <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                        <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                        <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                                    </select>
-                                    <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                            _e('</div>');
-
+                            $this->condition_field(0,$rand,$field);
 
                         _e('</div>
                     </div>
@@ -229,7 +211,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>Rating Field</h2>
+                                <h2>Rating Field [  '.$rand.'  ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">                        
                             <button type="button" class="btn btn-link" onclick=remove('.$rand.')><i class="fa fa-remove"></i></button>
@@ -296,31 +278,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                                 <input type="text" class="form-control" id="cl-cls-'.$rand.'" name="cl-cls['.$rand.']" value="'.(isset($field['cl-cls'])?''.$field['cl-cls'].'':"").'">
                             </div>');
 
-
-                            _e('<div class="form-group">
-                                <label for="class-'.$rand.'">Conditions:</label>');
-                                _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                    <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                    <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                                </select> this field if </div>');
-                            _e('</div>');
-                            _e('<div class="form-group options_vcf7">
-                                <label for="class-'.$rand.'"></label>');
-                                _e('<div class="row">
-                                    <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                        <option value="">Select a field</option>                                    
-                                    </select>
-                                    <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                        <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                        <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                        <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                        <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                        <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                        <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                                    </select>
-                                    <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                            _e('</div>');
-
+                            $this->condition_field(0,$rand,$field);
 
                         _e('</div>
                     </div>
@@ -332,7 +290,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>Password Field</h2>
+                                <h2>Password Field [  '.$rand.'  ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">
                             <button type="button" class="btn btn-link" onclick=remove('.$rand.')><i class="fa fa-remove"></i></button>
@@ -411,31 +369,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                                 <input type="text" class="form-control" id="cl-cls-'.$rand.'" name="cl-cls['.$rand.']" value="'.(isset($field['cl-cls'])?''.$field['cl-cls'].'':"").'">
                             </div>');
 
-                            
-                            _e('<div class="form-group">
-                                <label for="class-'.$rand.'">Conditions:</label>');
-                                _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                    <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                    <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                                </select> this field if </div>');
-                            _e('</div>');
-                            _e('<div class="form-group options_vcf7">
-                                <label for="class-'.$rand.'"></label>');
-                                _e('<div class="row">
-                                    <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                        <option value="">Select a field</option>                                    
-                                    </select>
-                                    <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                        <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                        <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                        <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                        <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                        <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                        <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                                    </select>
-                                    <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                            _e('</div>');
-
+                            $this->condition_field(0,$rand,$field);
 
                         _e('</div>
                     </div>
@@ -447,7 +381,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>Email Field</h2>
+                                <h2>Email Field [  '.$rand.'  ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">
                             <button type="button" class="btn btn-link" onclick=remove('.$rand.')><i class="fa fa-remove"></i></button>
@@ -518,31 +452,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                                 <input type="text" class="form-control" id="cl-cls-'.$rand.'" name="cl-cls['.$rand.']" value="'.(isset($field['cl-cls'])?''.$field['cl-cls'].'':"").'">
                             </div>');
 
-
-                            _e('<div class="form-group">
-                                <label for="class-'.$rand.'">Conditions:</label>');
-                                _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                    <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                    <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                                </select> this field if </div>');
-                            _e('</div>');
-                            _e('<div class="form-group options_vcf7">
-                                <label for="class-'.$rand.'"></label>');
-                                _e('<div class="row">
-                                    <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                        <option value="">Select a field</option>                                    
-                                    </select>
-                                    <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                        <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                        <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                        <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                        <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                        <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                        <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                                    </select>
-                                    <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                            _e('</div>');
-
+                            $this->condition_field(0,$rand,$field);
 
                         _e('</div>
                     </div>
@@ -554,7 +464,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>Phone Field</h2>
+                                <h2>Phone Field [  '.$rand.'  ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">
                             <button type="button" class="btn btn-link" onclick=remove('.$rand.')><i class="fa fa-remove"></i></button>
@@ -633,31 +543,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                                 <input type="text" class="form-control" id="cl-cls-'.$rand.'" name="cl-cls['.$rand.']" value="'.(isset($field['cl-cls'])?''.$field['cl-cls'].'':"").'">
                             </div>');
 
-
-                            _e('<div class="form-group">
-                                <label for="class-'.$rand.'">Conditions:</label>');
-                                _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                    <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                    <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                                </select> this field if </div>');
-                            _e('</div>');
-                            _e('<div class="form-group options_vcf7">
-                                <label for="class-'.$rand.'"></label>');
-                                _e('<div class="row">
-                                    <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                        <option value="">Select a field</option>                                    
-                                    </select>
-                                    <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                        <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                        <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                        <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                        <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                        <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                        <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                                    </select>
-                                    <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                            _e('</div>');
-
+                            $this->condition_field(0,$rand,$field);
 
                         _e('</div>
                     </div>
@@ -669,7 +555,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>Textarea Field</h2>
+                                <h2>Textarea Field [  '.$rand.'  ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">
                             <button type="button" class="btn btn-link" onclick=remove('.$rand.')><i class="fa fa-remove"></i></button>
@@ -748,31 +634,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                                 <input type="text" class="form-control" id="cl-cls-'.$rand.'" name="cl-cls['.$rand.']" value="'.(isset($field['cl-cls'])?''.$field['cl-cls'].'':"").'">
                             </div>');
 
-
-                            _e('<div class="form-group">
-                                <label for="class-'.$rand.'">Conditions:</label>');
-                                _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                    <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                    <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                                </select> this field if </div>');
-                            _e('</div>');
-                            _e('<div class="form-group options_vcf7">
-                                <label for="class-'.$rand.'"></label>');
-                                _e('<div class="row">
-                                    <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                        <option value="">Select a field</option>                                    
-                                    </select>
-                                    <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                        <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                        <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                        <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                        <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                        <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                        <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                                    </select>
-                                    <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                            _e('</div>');
-
+                            $this->condition_field(0,$rand,$field);
 
                         _e('</div>
                     </div>
@@ -784,7 +646,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>URL Field</h2>
+                                <h2>URL Field [  '.$rand.'  ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">
                             <button type="button" class="btn btn-link" onclick=remove('.$rand.')><i class="fa fa-remove"></i></button>
@@ -855,31 +717,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                                 <input type="text" class="form-control" id="cl-cls-'.$rand.'" name="cl-cls['.$rand.']" value="'.(isset($field['cl-cls'])?''.$field['cl-cls'].'':"").'">
                             </div>');
 
-
-                            _e('<div class="form-group">
-                                <label for="class-'.$rand.'">Conditions:</label>');
-                                _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                    <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                    <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                                </select> this field if </div>');
-                            _e('</div>');
-                            _e('<div class="form-group options_vcf7">
-                                <label for="class-'.$rand.'"></label>');
-                                _e('<div class="row">
-                                    <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                        <option value="">Select a field</option>                                    
-                                    </select>
-                                    <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                        <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                        <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                        <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                        <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                        <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                        <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                                    </select>
-                                    <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                            _e('</div>');
-
+                            $this->condition_field(0,$rand,$field);
 
                         _e('</div>
                     </div>
@@ -891,7 +729,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>Date Field</h2>
+                                <h2>Date Field [  '.$rand.'  ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">
                             <button type="button" class="btn btn-link" onclick=remove('.$rand.')><i class="fa fa-remove"></i></button>
@@ -958,31 +796,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                                 <input type="text" class="form-control" id="cl-cls-'.$rand.'" name="cl-cls['.$rand.']" value="'.(isset($field['cl-cls'])?''.$field['cl-cls'].'':"").'">
                             </div>');
 
-
-                            _e('<div class="form-group">
-                                <label for="class-'.$rand.'">Conditions:</label>');
-                                _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                    <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                    <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                                </select> this field if </div>');
-                            _e('</div>');
-                            _e('<div class="form-group options_vcf7">
-                                <label for="class-'.$rand.'"></label>');
-                                _e('<div class="row">
-                                    <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                        <option value="">Select a field</option>                                    
-                                    </select>
-                                    <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                        <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                        <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                        <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                        <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                        <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                        <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                                    </select>
-                                    <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                            _e('</div>');
-
+                            $this->condition_field(0,$rand,$field);
 
                         _e('</div>
                     </div>
@@ -994,7 +808,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>Time Field</h2>
+                                <h2>Time Field [  '.$rand.'  ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">
                                 <button type="button" class="btn btn-link" onclick=remove('.$rand.')><i class="fa fa-remove"></i></button>
@@ -1061,31 +875,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                                 <input type="text" class="form-control" id="cl-cls-'.$rand.'" name="cl-cls['.$rand.']" value="'.(isset($field['cl-cls'])?''.$field['cl-cls'].'':"").'">
                             </div>');
 
-
-                            _e('<div class="form-group">
-                                <label for="class-'.$rand.'">Conditions:</label>');
-                                _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                    <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                    <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                                </select> this field if </div>');
-                            _e('</div>');
-                            _e('<div class="form-group options_vcf7">
-                                <label for="class-'.$rand.'"></label>');
-                                _e('<div class="row">
-                                    <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                        <option value="">Select a field</option>                                    
-                                    </select>
-                                    <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                        <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                        <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                        <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                        <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                        <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                        <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                                    </select>
-                                    <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                            _e('</div>');
-
+                            $this->condition_field(0,$rand,$field);
 
                         _e('</div>
                     </div>
@@ -1097,7 +887,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>File Field</h2>
+                                <h2>File Field [  '.$rand.'  ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">
                             <button type="button" class="btn btn-link" onclick=remove('.$rand.')><i class="fa fa-remove"></i></button>
@@ -1172,31 +962,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                                 <input type="text" class="form-control" id="cl-cls-'.$rand.'" name="cl-cls['.$rand.']" value="'.(isset($field['cl-cls'])?''.$field['cl-cls'].'':"").'">
                             </div>');
 
-
-                            _e('<div class="form-group">
-                                <label for="class-'.$rand.'">Conditions:</label>');
-                                _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                    <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                    <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                                </select> this field if </div>');
-                            _e('</div>');
-                            _e('<div class="form-group options_vcf7">
-                                <label for="class-'.$rand.'"></label>');
-                                _e('<div class="row">
-                                    <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                        <option value="">Select a field</option>                                    
-                                    </select>
-                                    <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                        <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                        <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                        <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                        <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                        <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                        <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                                    </select>
-                                    <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                            _e('</div>');
-                            
+                            $this->condition_field(0,$rand,$field);                            
 
                         _e('</div>
                     </div>
@@ -1208,7 +974,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>Select Field</h2>
+                                <h2>Select Field [  '.$rand.'  ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">
                             <button type="button" class="btn btn-link" onclick=remove('.$rand.')><i class="fa fa-remove"></i></button>
@@ -1322,31 +1088,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                             </select>
                         </div>');
 
-                        
-                        _e('<div class="form-group">
-                            <label for="class-'.$rand.'">Conditions:</label>');
-                            _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                            </select> this field if </div>');
-                        _e('</div>');
-                        _e('<div class="form-group options_vcf7">
-                        <label for="class-'.$rand.'"></label>');
-                        _e('<div class="row">
-                            <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                <option value="">Select a field</option>                                    
-                            </select>
-                            <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                            </select>
-                            <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                        _e('</div>');
-
+                        $this->condition_field(0,$rand,$field);
                     
                     _e('</div>
                     </div>
@@ -1358,7 +1100,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>Radio Field</h2>
+                                <h2>Radio Field [  '.$rand.'  ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">
 
@@ -1472,31 +1214,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                             </select>
                         </div>');
 
-                        
-                        _e('<div class="form-group">
-                            <label for="class-'.$rand.'">Conditions:</label>');
-                            _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                            </select> this field if </div>');
-                        _e('</div>');
-                        _e('<div class="form-group options_vcf7">
-                        <label for="class-'.$rand.'"></label>');
-                        _e('<div class="row">
-                            <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                <option value="">Select a field</option>                                    
-                            </select>
-                            <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                            </select>
-                            <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                        _e('</div>');
-
+                        $this->condition_field(0,$rand,$field);
 
                     _e('</div>
                     </div>
@@ -1508,7 +1226,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>Checkbox Field</h2>
+                                <h2>Checkbox Field [  '.$rand.'  ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">
 
@@ -1625,31 +1343,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                             </select>
                         </div>');
 
-                        
-                        _e('<div class="form-group">
-                            <label for="class-'.$rand.'">Conditions:</label>');
-                            _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                            </select> this field if </div>');
-                        _e('</div>');
-                        _e('<div class="form-group options_vcf7">
-                        <label for="class-'.$rand.'"></label>');
-                        _e('<div class="row">
-                            <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                <option value="">Select a field</option>                                    
-                            </select>
-                            <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                            </select>
-                            <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                        _e('</div>');
-
+                        $this->condition_field(0,$rand,$field);
 
                     _e('</div>
                     </div>
@@ -1661,7 +1355,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>Submit</h2>
+                                <h2>Submit [  '.$rand.'  ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">
                             <button type="button" class="btn btn-link" onclick=remove('.$rand.')><i class="fa fa-remove"></i></button>
@@ -1723,31 +1417,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                             </select>
                         </div>');
 
-
-                        _e('<div class="form-group">
-                            <label for="class-'.$rand.'">Conditions:</label>');
-                            _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                            </select> this field if </div>');
-                        _e('</div>');
-                        _e('<div class="form-group options_vcf7">
-                        <label for="class-'.$rand.'"></label>');
-                        _e('<div class="row">
-                            <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                <option value="">Select a field</option>                                    
-                            </select>
-                            <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                            </select>
-                            <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                        _e('</div>');
-
+                        $this->condition_field(0,$rand,$field);
 
                         _e('</div>
                     </div>
@@ -1759,7 +1429,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>reCaptcha</h2>
+                                <h2>reCaptcha [ '.$rand.' ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">                    	
                             <button type="button" class="btn btn-link" onclick=remove('.$rand.')><i class="fa fa-remove"></i></button>
@@ -1821,31 +1491,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                                 </select>
                             </div>');
 
-
-                            _e('<div class="form-group">
-                                <label for="class-'.$rand.'">Conditions:</label>');
-                                _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                    <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                    <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                                </select> this field if </div>');
-                            _e('</div>');
-                            _e('<div class="form-group options_vcf7">
-                            <label for="class-'.$rand.'"></label>');
-                            _e('<div class="row">
-                                <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                    <option value="">Select a field</option>                                    
-                                </select>
-                                <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                    <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                    <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                    <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                    <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                    <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                    <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                                </select>
-                                <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                            _e('</div>');
-                            
+                            $this->condition_field(0,$rand,$field);
 
                         _e('</div>
                     </div>
@@ -1857,7 +1503,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>Acceptance Field</h2>
+                                <h2>Acceptance Field [ '.$rand.' ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">
                             <button type="button" class="btn btn-link" onclick=remove('.$rand.')><i class="fa fa-remove"></i></button>
@@ -1924,31 +1570,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                                 </select>
                             </div>');
 
-
-                            _e('<div class="form-group">
-                            <label for="class-'.$rand.'">Conditions:</label>');
-                                _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                    <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                    <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                                </select> this field if </div>');
-                            _e('</div>');
-                            _e('<div class="form-group options_vcf7">
-                            <label for="class-'.$rand.'"></label>');
-                            _e('<div class="row">
-                                <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                    <option value="">Select a field</option>                                    
-                                </select>
-                                <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                    <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                    <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                    <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                    <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                    <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                    <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                                </select>
-                                <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                            _e('</div>');
-
+                            $this->condition_field(0,$rand,$field);
 
                         _e('</div>
                     </div>
@@ -1960,7 +1582,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>Product Title</h2>
+                                <h2>Product Title [ '.$rand.' ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">
                             <button type="button" class="btn btn-link" onclick=remove('.$rand.')><i class="fa fa-remove"></i></button>
@@ -2015,31 +1637,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                             </select>
                         </div>');
 
-
-                        _e('<div class="form-group">
-                            <label for="class-'.$rand.'">Conditions:</label>');
-                            _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                            </select> this field if </div>');
-                        _e('</div>');
-                        _e('<div class="form-group options_vcf7">
-                        <label for="class-'.$rand.'"></label>');
-                        _e('<div class="row">
-                            <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                <option value="">Select a field</option>                                    
-                            </select>
-                            <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                            </select>
-                            <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                        _e('</div>');
-
+                        $this->condition_field(0,$rand,$field);
 
                         _e('</div>
                     </div>
@@ -2051,7 +1649,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>Product Url</h2>
+                                <h2>Product Url [ '.$rand.' ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">
 
@@ -2109,31 +1707,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                                 </select>
                             </div>');
 
-
-                            _e('<div class="form-group">
-                            <label for="class-'.$rand.'">Conditions:</label>');
-                            _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                    <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                                </select> this field if </div>');
-                            _e('</div>');
-                            _e('<div class="form-group options_vcf7">
-                            <label for="class-'.$rand.'"></label>');
-                            _e('<div class="row">
-                                <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                    <option value="">Select a field</option>                                    
-                                </select>
-                                <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                    <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                    <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                    <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                    <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                    <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                    <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                                </select>
-                                <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                            _e('</div>');
-                            
+                            $this->condition_field(0,$rand,$field);
 
                         _e('</div>
                     </div>
@@ -2145,7 +1719,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>Product Price</h2>
+                                <h2>Product Price [ '.$rand.' ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">
 
@@ -2202,31 +1776,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                             </select>
                         </div>');
                         
-                        
-                        _e('<div class="form-group">
-                            <label for="class-'.$rand.'">Conditions:</label>');
-                            _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                            </select> this field if </div>');
-                        _e('</div>');
-                        _e('<div class="form-group options_vcf7">
-                        <label for="class-'.$rand.'"></label>');
-                        _e('<div class="row">
-                            <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                <option value="">Select a field</option>                                    
-                            </select>
-                            <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                            </select>
-                            <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                        _e('</div>');
-
+                        $this->condition_field(0,$rand,$field);
 
                     _e('</div>
                     </div>
@@ -2238,7 +1788,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                     <div class="card-header" id="card-'.$rand.'">
                         <div class="row">
                             <div class="col-sm-8 head_box">
-                                <h2>Product Quantity</h2>
+                                <h2>Product Quantity [ '.$rand.' ]</h2>
                             </div>
                             <div class="col-sm-4 box_button">
                             <button type="button" class="btn btn-link" onclick=remove('.$rand.')><i class="fa fa-remove"></i></button>
@@ -2293,31 +1843,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                             </select>
                         </div>');
 
-
-                        _e('<div class="form-group">
-                            <label for="class-'.$rand.'">Conditions:</label>');
-                            _e('<div><select class="form-control" id="cond-cls-'.$rand.'" name="cond-cls['.$rand.']" >
-                                <option value="show" '.( isset($field['cond-cls'])&&$field['cond-cls']=='show'?' selected':'' ).'>Show</option>
-                                <option value="hide" '.( isset($field['cond-cls'])&&$field['cond-cls']=='hide'?' selected':'' ).'>Hide</option>
-                            </select> this field if </div>');
-                        _e('</div>');
-                        _e('<div class="form-group options_vcf7">
-                        <label for="class-'.$rand.'"></label>');
-                        _e('<div class="row">
-                            <select class="form-control col-md-4 cond" id="cond2-cls-'.$rand.'" name="cond2-cls['.$rand.']" >
-                                <option value="">Select a field</option>                                    
-                            </select>
-                            <select class="form-control col-md-4 cond" id="cond3-cls-'.$rand.'" name="cond3-cls['.$rand.']" >
-                                <option value="Equal" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Equal'?' selected':'' ).'>Equal to</option> 
-                                <option value="NotEqual" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
-                                <option value="IsEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
-                                <option value="IsNotEmpty" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='IsNotEmpty'?' selected':'' ).'>Is Not Empty</option> 
-                                <option value="Contains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='Contains'?' selected':'' ).'>Contains</option> 
-                                <option value="NotContains" '.( isset($field['cond3-cls'])&&$field['cond3-cls']=='NotContains'?' selected':'' ).'>Not Contains</option>
-                            </select>
-                            <input type="text" class="form-control col-md-4 cond" id="cond4-cls-'.$rand.'" name="cond4-cls['.$rand.']" /></div>');
-                        _e('</div>');
-
+                        $this->condition_field(0,$rand,$field);
                         
                     _e('</div>
                     </div>

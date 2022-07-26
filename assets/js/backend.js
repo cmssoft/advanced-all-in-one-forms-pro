@@ -19,6 +19,7 @@ jQuery(document).ready(function()
 	    {
 	    	jQuery("#sortable1").append(data);
 	    	jQuery("#add_fields").attr('disabled', false);
+			add_and_cond();
 	    }
 	});
 	return false;
@@ -313,6 +314,48 @@ function smtp_reset()
 	}
 }
 
+function add_and_cond(){
+	jQuery('.add_and_cond').unbind().click(function(){
+		var rnum = jQuery(this).attr('data-rand'); 
+		var rseq = parseInt(jQuery('#cond_count_'+rnum).val()) + 1; 
+		var html = '';
+	
+		html = html + '<div id="cond_group_'+rnum+'_'+rseq+'" class="form-group options_vcf7 row">';
+			html = html + '<label for="class-'+rnum+'"></label>';    
+			html = html + '<select id="condfield-'+rnum+'-'+rseq+'" name="condfield['+rnum+'][]" class="form-control col-md-4 cond">';
+				html = html + '<option value="">Select a field</option>';                                    
+			html = html + '</select>';
+			html = html + '<select id="condmatch-'+rnum+'-'+rseq+'" name="condmatch['+rnum+'][]" class="form-control col-md-4 cond">';
+				html = html + '<option value="Equal">Equal to</option>'; 
+				html = html + '<option value="NotEqual">Not Equal to</option>'; 
+				html = html + '<option value="IsEmpty">Is Empty</option>';
+				html = html + '<option value="IsNotEmpty">Is Not Empty</option>';
+				html = html + '<option value="Contains">Contains</option>';
+				html = html + '<option value="NotContains">Not Contains</option>';
+			html = html + '</select>';
+			html = html + '<input id="condvalue-'+rnum+'-'+rseq+'" name="condvalue['+rnum+'][]" type="text" placeholder="Enter Value" class="form-control col-md-4 cond" /> <i class="fa fa-question-circle"></i>';                                    
+			html = html + '<span class="fill_and">AND</span>';                                    
+			html = html + '<button type="button" class="add_and_cond button button-primary" data-rand="'+rnum+'" data-in="'+rseq+'">+</button>';
+			html = html + '<button type="button" class="del_and_cond button button-primary" data-rand="'+rnum+'" data-in="'+rseq+'">-</button>';
+		html = html + '</div>';
+		
+		jQuery('#cond_div_'+rnum).append(html);
+		jQuery('#cond_count_'+rnum).val(rseq);
+		add_and_cond();
+		del_and_cond();
+	});	
+}	
+function del_and_cond(){
+	jQuery('.del_and_cond').unbind().click(function(){
+		var rnum = jQuery(this).attr('data-rand'); 
+		var rseq = jQuery(this).attr('data-in'); 
+		jQuery('#cond_group_'+rnum+'_'+rseq).remove();
+		var rseq = parseInt(jQuery('#cond_count_'+rnum).val()) - 1; 
+		jQuery('#cond_count_'+rnum).val(rseq);
+	});
+}
+add_and_cond();
+
 jQuery(window).on("load", function()
 {
 	if(jQuery("#smtp_check").is(':checked'))
@@ -351,5 +394,4 @@ jQuery(window).on("load", function()
 			jQuery(".advanced_cart_form_shortcode").show();
 		}
 	}
-})
-
+});
