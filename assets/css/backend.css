@@ -48,11 +48,10 @@ ul#sortable1 li {
     width: 20%;
     color: #007cba;
 }
-
-.options_vcf7.row .col-md-4{
+.options_vcf7 .row .col-md-4, .options_vcf7.row .col-md-4{
     display: table-cell;
 }
-.options_vcf7.row{
+.options_vcf7 .row,.options_vcf7.row{
     margin: 0px;
 }
 .options_vcf7.row .cond{

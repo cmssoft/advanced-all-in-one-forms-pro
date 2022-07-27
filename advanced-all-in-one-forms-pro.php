@@ -27,3 +27,12 @@ if(!function_exists( 'AAIOF_core')){
         }        
     }
 }
+if(!function_exists( 'AAIOF_sanitize')){
+    function AAIOF_sanitize( $input ) {
+        $new_input = array();
+        foreach ( $input as $key => $val ) {
+            $new_input[ $key ] = sanitize_text_field( $val );
+        }
+        return $new_input;
+    }
+}

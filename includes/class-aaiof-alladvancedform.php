@@ -137,7 +137,7 @@ if (!class_exists( 'AAIOF_Alladvancedform')){
         }
         public function aaiof_recaptcha_generate(){
             $params = array();
-            parse_str(sanitize_post($_POST['formData']), $params);
+            parse_str(AAIOF_sanitize($_POST['formData']), $params);
             $sitekey = $params['sitekey'];
             $secretkey = $params['secret'];
 
@@ -146,7 +146,7 @@ if (!class_exists( 'AAIOF_Alladvancedform')){
         }
         public function aaiof_advance_setting_form(){
             $params = array();
-            parse_str(sanitize_post($_POST['formData']), $params);
+            parse_str(AAIOF_sanitize($_POST['formData']), $params);
 
             $show_enquiry_detail_page = sanitize_text_field($params['show_enquiry_detail_page']);
             $pdetail_form_id = sanitize_text_field($params['pdetail_form_id']);
@@ -216,15 +216,19 @@ if (!class_exists( 'AAIOF_Alladvancedform')){
             }
             $field = sanitize_text_field($_POST['field']);
             $fieldsobj = new \AdvancedAllInOneForms\AAIOF_Customfields();
-            $rand = rand();
+            $rand = time();
             if(method_exists(AAIOF_Customfields::class, $field)){  
                 $fieldsobj->$field($field,$rand);
             }            
+            echo '[=] The '.ucfirst($field).' Field [ '.$rand.' ] is added.';
             die();  
         }
         public function aaiof_get_before_update_postdata( $post_id ){
             if(isset($_POST['input'])){
-                foreach(sanitize_post($_POST['input']) as $key=>$value){
+                //echo '<pre>';
+                //print_r($_POST);exit;
+
+                foreach(AAIOF_sanitize($_POST['input']) as $key=>$value){
                     $data['type'] = $value;
                     $data['label'] = sanitize_text_field($_POST['label'][$key]);
                     $data['name'] = sanitize_text_field($_POST['name'][$key]);
@@ -238,14 +242,18 @@ if (!class_exists( 'AAIOF_Alladvancedform')){
                     $data['extension'] = sanitize_text_field($_POST['extension'][$key]);
                     $data['rows'] = sanitize_text_field($_POST['rows'][$key]);
                     $data['columns'] = sanitize_text_field($_POST['columns'][$key]);
-                    $data['option'] = sanitize_text_field($_POST['option'][$key]);
-                    $data['option_val'] = sanitize_text_field($_POST['option_val'][$key]);
+                    $data['option'] = AAIOF_sanitize($_POST['option'][$key]);
+                    $data['option_val'] = AAIOF_sanitize($_POST['option_val'][$key]);
                     $data['rw-cls'] = sanitize_text_field($_POST['rw-cls'][$key]);
                     $data['raws'] = sanitize_text_field($_POST['raws'][$key]);
                     $data['rawed'] = sanitize_text_field($_POST['rawed'][$key]);
                     $data['cl-cls'] = sanitize_text_field($_POST['cl-cls'][$key]);
                     $data['col-data'] = sanitize_text_field($_POST['col-data'][$key]);
                     $data['col-data-num'] = sanitize_text_field($_POST['col-data-num'][$key]);
+                    $data['cond'] = sanitize_text_field($_POST['cond'][$key]);
+                    $data['condfield'] = sanitize_text_field($_POST['condfield'][$key]);
+                    $data['condmatch'] = sanitize_text_field($_POST['condmatch'][$key]);
+                    $data['condvalue'] = sanitize_text_field($_POST['condvalue'][$key]);
                     if(!empty($data['type'])){
                         $field[$key] = $data;
                     }
@@ -253,14 +261,14 @@ if (!class_exists( 'AAIOF_Alladvancedform')){
             }
             $field_data = serialize($field);
 
-            $vcf_mail = sanitize_post($_POST['vcf7-mail']);
+            $vcf_mail = AAIOF_sanitize($_POST['vcf7-mail']);
             $mail['recipient'] = sanitize_email($vcf_mail['recipient']);
             $mail['sender'] = sanitize_email($vcf_mail['sender']);
             $mail['subject'] = sanitize_text_field($vcf_mail['subject']);
             $mail['attachments'] = wp_kses_post($vcf_mail['attachments']);
             $mail['additional_headers'] = wp_kses_post($vcf_mail['additional_headers']);
 
-            $vcf_mail2 = sanitize_post($_POST['vcf7-mail-2']);
+            $vcf_mail2 = AAIOF_sanitize($_POST['vcf7-mail-2']);
             $mail2['active'] = sanitize_text_field($vcf_mail2['active']);
             $mail2['recipient'] = wp_kses_post($vcf_mail2['recipient']);
             $mail2['sender'] = sanitize_email($vcf_mail2['sender']);
@@ -276,7 +284,7 @@ if (!class_exists( 'AAIOF_Alladvancedform')){
             update_post_meta( $post_id, 'vcf_mail_body2', wp_kses_post($vcf_mail2['body']));
             update_post_meta( $post_id, 'vcf_mail_data', $mail_data);
 
-            $message = sanitize_post($_POST['vcf7-message']);
+            $message = AAIOF_sanitize($_POST['vcf7-message']);
             $message = serialize($message);
             update_post_meta( $post_id, 'vcf_success_sms', $message);
         }
@@ -302,7 +310,7 @@ if (!class_exists( 'AAIOF_Alladvancedform')){
             global $wpdb;
             $table_name2 = $wpdb->prefix . "advanced_all_form_entry";
             $params = array();
-            parse_str(sanitize_post($_POST['fields']), $params);
+            parse_str(AAIOF_sanitize($_POST['fields']), $params);
             $vcfid = sanitize_text_field($_POST['vcf_id']);
             if(!empty($_FILES['file'])){
                 $file = $_FILES['file'];

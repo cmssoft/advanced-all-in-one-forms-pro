@@ -5,22 +5,21 @@ if (!class_exists( 'AAIOF_Customfields')){
     class AAIOF_Customfields {
         public function condition_field($field_in=0, $rand, $field){
             _e('<div class="form-group">');
+                _e('<input class="fieldids" type="hidden" value="'.$rand.'" />');
                 _e('<label for="class-'.$rand.'">Conditional Logic:</label>');
-
                 _e('<select id="cond-'.$rand.'" name="cond['.$rand.']" class="form-control">
                     <option value="">Select a condition</option>
                     <option value="show" '.( isset($field['cond'])&&$field['cond']=='show'?' selected':'' ).'>Show</option>
                     <option value="hide" '.( isset($field['cond'])&&$field['cond']=='hide'?' selected':'' ).'>Hide</option>
                 </select> &nbsp; If this field match below conditions ');
             _e('</div>');                               
-            _e('<input id="cond_count_'.$rand.'" type="hidden" value="'.$field_in.'" />');
             _e('<div id="cond_div_'.$rand.'">');
-                _e('<div id="cond_group_'.$rand.'_'.$field_in.'" class="form-group options_vcf7 row">');
+                _e('<div id="cond_group_'.$rand.'" class="form-group options_vcf7 row">');
                     _e('<label for="class-'.$rand.'"></label>');    
-                    _e('<select id="condfield-'.$rand.'-'.$field_in.'" name="condfield['.$rand.'][]" class="form-control col-md-4 cond">
-                        <option value="">Select a field</option>                                    
+                    _e('<select id="condfield-'.$rand.'" name="condfield['.$rand.']" data-selected="'.$field['condfield'].'" class="form-control col-md-4 cond condfields">
+                        <option value="">Select a Field</option>                                    
                     </select>');
-                    _e('<select id="condmatch-'.$rand.'-'.$field_in.'" name="condmatch['.$rand.'][]" class="form-control col-md-4 cond">
+                    _e('<select id="condmatch-'.$rand.'" name="condmatch['.$rand.']" class="form-control col-md-4 cond">
                         <option value="Equal" '.( isset($field['condmatch'])&&$field['condmatch']=='Equal'?' selected':'' ).'>Equal to</option> 
                         <option value="NotEqual" '.( isset($field['condmatch'])&&$field['condmatch']=='NotEqual'?' selected':'' ).'>Not Equal to</option> 
                         <option value="IsEmpty" '.( isset($field['condmatch'])&&$field['condmatch']=='IsEmpty'?' selected':'' ).'>Is Empty</option> 
@@ -28,9 +27,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                         <option value="Contains" '.( isset($field['condmatch'])&&$field['condmatch']=='Contains'?' selected':'' ).'>Contains</option> 
                         <option value="NotContains" '.( isset($field['condmatch'])&&$field['condmatch']=='NotContains'?' selected':'' ).'>Not Contains</option>
                     </select>');
-                    _e('<input id="condvalue-'.$rand.'-'.$field_in.'" name="condvalue['.$rand.'][]" type="text" placeholder="Enter Value" class="form-control col-md-4 cond" /> <i class="fa fa-question-circle"></i>');                                    
-                    _e('<span class="fill_and">AND</span>');                                    
-                    _e('<button type="button" class="add_and_cond button button-primary" data-rand="'.$rand.'" data-in="'.$field_in.'">+</button>');
+                    _e('<input id="condvalue-'.$rand.'" name="condvalue['.$rand.']" type="text" placeholder="Enter Value" class="form-control col-md-4 cond" value="'.(isset($field['condvalue'])?''.$field['condvalue'].'':"").'" /> <i class="fa fa-question-circle"></i>');                                    
                 _e('</div>');                                
             _e('</div>');
         }
@@ -1005,49 +1002,52 @@ if (!class_exists( 'AAIOF_Customfields')){
                                 <label for="required-'.$rand.'">Required:</label>
                                 <input type="checkbox" class="form-control" id="required-'.$rand.'" name="required['.$rand.']" value="yes" '.(($field['required']=='yes')?'checked':"").'>
                             </div>
-                            <div class="option_'.$rand.' options_vcf7">');
+                            <div class="form-group">
+                                <label></label>
+                                <div class="option_'.$rand.' options_vcf7">');
 
-                                if(isset($field['option']))
-                                {
-                                    foreach($field['option'] as $key1=>$value1)
+                                    if(isset($field['option']))
                                     {
-                                        _e('<div class="row select_row_'.$rand.' select_row_'.$rand.'-'.$key1.'" id="select_option_list">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <input type="text" Placeholder="Option" name="option['.$rand.']['.$key1.']" class="r_opt form-control" value="'.$value1.'">
+                                        foreach($field['option'] as $key1=>$value1)
+                                        {
+                                            _e('<div class="row select_row_'.$rand.' select_row_'.$rand.'-'.$key1.'" id="select_option_list">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <input type="text" Placeholder="Option" name="option['.$rand.']['.$key1.']" class="r_opt form-control" value="'.$value1.'">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <input type="text" Placeholder="Value" name="option_val['.$rand.']['.$key1.']" class="r_val form-control" value="'.$field['option_val'][$key1].'">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <input type="text" Placeholder="Value" name="option_val['.$rand.']['.$key1.']" class="r_val form-control" value="'.$field['option_val'][$key1].'">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <i class="fa fa-plus-circle fa-2x add_more_radio" onclick=add_more_options(1,'.$rand.')></i>
-                                            <i class="col-md-offset-1 fa fa-times-circle fa-2x remove_more_radio" onclick="remove_more_options('.$key1.','.$rand.')"></i>
-                                        </div>
+                                            <div class="col-md-4">
+                                                <i class="fa fa-plus-circle fa-2x add_more_radio" onclick=add_more_options(1,'.$rand.')></i>
+                                                <i class="col-md-offset-1 fa fa-times-circle fa-2x remove_more_radio" onclick="remove_more_options('.$key1.','.$rand.')"></i>
+                                            </div>
+                                            </div>');
+                                        }
+                                    }
+                                    else
+                                    {
+                                        _e('<div class="row select_row_'.$rand.' " id="select_option_list">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <input type="text" Placeholder="Option" name="option['.$rand.'][0]" class="r_opt form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                <input type="text" Placeholder="Value" name="option_val['.$rand.'][0]" class="r_val form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <i class="margin-top-5 fa fa-plus-circle fa-2x default_blue add_more_radio" onclick=add_more_options(1,'.$rand.')></i>
+                                            </div>
                                         </div>');
                                     }
-                                }
-                                else
-                                {
-                                    _e('<div class="row select_row_'.$rand.' " id="select_option_list">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <input type="text" Placeholder="Option" name="option['.$rand.'][0]" class="r_opt form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                            <input type="text" Placeholder="Value" name="option_val['.$rand.'][0]" class="r_val form-control">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <i class="margin-top-5 fa fa-plus-circle fa-2x default_blue add_more_radio" onclick=add_more_options(1,'.$rand.')></i>
-                                        </div>
-                                    </div>');
-                                }
-                            _e('</div>
+                                _e('</div>
+                            </div>    
                             <div class="form-group">
                             <label for="class-'.$rand.'">Raw class:</label>
                             <input type="text" class="form-control" id="rw-cls-'.$rand.'" name="rw-cls['.$rand.']" value="'.(isset($field['rw-cls'])?''.$field['rw-cls'].'':"").'">
@@ -1056,7 +1056,7 @@ if (!class_exists( 'AAIOF_Customfields')){
                             <label for="class-'.$rand.'">Column  class:</label>
                             <input type="text" class="form-control" id="cl-cls-'.$rand.'" name="cl-cls['.$rand.']" value="'.(isset($field['cl-cls'])?''.$field['cl-cls'].'':"").'">
                         </div>
-                <div class="form-group">
+                        <div class="form-group">
                             <label for="raws-'.$rand.'">Raw Start:</label>
                             <input type="checkbox" class="form-control" id="raws-'.$rand.'" name="raws['.$rand.']" value="yes" '.(($field['raws']=='yes')?'checked':"").'>
                         </div>
@@ -1130,59 +1130,62 @@ if (!class_exists( 'AAIOF_Customfields')){
                                 <label for="required-'.$rand.'">Required:</label>
                                 <input type="checkbox" class="form-control" id="required-'.$rand.'" name="required['.$rand.']" value="yes" '.(($field['required']=='yes')?'checked':"").'>
                             </div>
-                            <div class="option_'.$rand.' options_vcf7">');
+                            <div class="form-group">
+                                <label></label>
+                                <div class="option_'.$rand.' options_vcf7">');
 
-                            if(isset($field['option']))
-                            {
-                                foreach($field['option'] as $key1=>$value1)
+                                if(isset($field['option']))
                                 {
+                                    foreach($field['option'] as $key1=>$value1)
+                                    {
 
-                                    _e('<div class="row select_row_'.$rand.' select_row_'.$rand.'-'.$key1.'" id="select_option_list">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <input type="text" Placeholder="Option" name="option['.$rand.']['.$key1.']" class="r_opt form-control" value="'.$value1.'">
+                                        _e('<div class="row select_row_'.$rand.' select_row_'.$rand.'-'.$key1.'" id="select_option_list">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <input type="text" Placeholder="Option" name="option['.$rand.']['.$key1.']" class="r_opt form-control" value="'.$value1.'">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <input type="text" Placeholder="Value" name="option_val['.$rand.']['.$key1.']" class="r_val form-control" value="'.$field['option_val'][$key1].'">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <input type="text" Placeholder="Value" name="option_val['.$rand.']['.$key1.']" class="r_val form-control" value="'.$field['option_val'][$key1].'">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <i class="fa fa-plus-circle fa-2x add_more_radio" onclick=add_more_options(1,'.$rand.')></i>
-                                        <i class="col-md-offset-1 fa fa-times-circle fa-2x remove_more_radio" onclick="remove_more_options('.$key1.','.$rand.')"></i>
-                                    </div>
+                                        <div class="col-md-4">
+                                            <i class="fa fa-plus-circle fa-2x add_more_radio" onclick=add_more_options(1,'.$rand.')></i>
+                                            <i class="col-md-offset-1 fa fa-times-circle fa-2x remove_more_radio" onclick="remove_more_options('.$key1.','.$rand.')"></i>
+                                        </div>
+                                        </div>');
+                                    }
+                                }
+                                else
+                                {    
+                                    _e('<div class="row select_row_'.$rand.' " id="select_option_list">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <input type="text" Placeholder="Option" name="option['.$rand.'][0]" class="r_opt form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                            <input type="text" Placeholder="Value" name="option_val['.$rand.'][0]" class="r_val form-control" >
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <i class="margin-top-5 fa fa-plus-circle fa-2x default_blue add_more_radio" onclick=add_more_options(1,'.$rand.')></i>
+                                        </div>
                                     </div>');
                                 }
-                            }
-                            else
-                            {    
-                                _e('<div class="row select_row_'.$rand.' " id="select_option_list">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <input type="text" Placeholder="Option" name="option['.$rand.'][0]" class="r_opt form-control">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                        <input type="text" Placeholder="Value" name="option_val['.$rand.'][0]" class="r_val form-control" >
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <i class="margin-top-5 fa fa-plus-circle fa-2x default_blue add_more_radio" onclick=add_more_options(1,'.$rand.')></i>
-                                    </div>
-                                </div>');
-                            }
-                            _e('</div>
+                                _e('</div>
+                            </div>
                             <div class="form-group">
-                            <label for="class-'.$rand.'">Raw class:</label>
-                            <input type="text" class="form-control" id="rw-cls-'.$rand.'" name="rw-cls['.$rand.']" value="'.(isset($field['rw-cls'])?''.$field['rw-cls'].'':"").'">
-                        </div>
-                        <div class="form-group">
-                            <label for="class-'.$rand.'">Column  class:</label>
-                            <input type="text" class="form-control" id="cl-cls-'.$rand.'" name="cl-cls['.$rand.']" value="'.(isset($field['cl-cls'])?''.$field['cl-cls'].'':"").'">
-                        </div>
-                <div class="form-group">
+                                <label for="class-'.$rand.'">Raw class:</label>
+                                <input type="text" class="form-control" id="rw-cls-'.$rand.'" name="rw-cls['.$rand.']" value="'.(isset($field['rw-cls'])?''.$field['rw-cls'].'':"").'">
+                            </div>
+                            <div class="form-group">
+                                <label for="class-'.$rand.'">Column  class:</label>
+                                <input type="text" class="form-control" id="cl-cls-'.$rand.'" name="cl-cls['.$rand.']" value="'.(isset($field['cl-cls'])?''.$field['cl-cls'].'':"").'">
+                            </div>
+                            <div class="form-group">
                             <label for="raws-'.$rand.'">Raw Start:</label>
                             <input type="checkbox" class="form-control" id="raws-'.$rand.'" name="raws['.$rand.']" value="yes" '.(($field['raws']=='yes')?'checked':"").'>
                         </div>
@@ -1259,50 +1262,53 @@ if (!class_exists( 'AAIOF_Customfields')){
                                 <label for="required-'.$rand.'">Required:</label>
                                 <input type="checkbox" class="form-control" id="required-'.$rand.'" name="required['.$rand.']" value="yes" '.(($field['required']=='yes')?'checked':"").'>
                             </div>
-                            <div class="option_'.$rand.' options_vcf7">');
+                            <div class="form-group">
+                                <label></label>
+                                <div class="option_'.$rand.' options_vcf7">');
 
-                                if(isset($field['option']))
-                                {
-                                    foreach($field['option'] as $key1=>$value1)
+                                    if(isset($field['option']))
                                     {
-                                        _e('<div class="row select_row_'.$rand.' select_row_'.$rand.'-'.$key1.'" id="select_option_list">
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <input type="text" Placeholder="Option" name="option['.$rand.']['.$key1.']" class="r_opt form-control" value="'.$value1.'">
+                                        foreach($field['option'] as $key1=>$value1)
+                                        {
+                                            _e('<div class="row select_row_'.$rand.' select_row_'.$rand.'-'.$key1.'" id="select_option_list">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <input type="text" Placeholder="Option" name="option['.$rand.']['.$key1.']" class="r_opt form-control" value="'.$value1.'">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group">
-                                                    <input type="text" Placeholder="Value" name="option_val['.$rand.']['.$key1.']" class="r_val form-control" value="'.$field['option_val'][$key1].'">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <input type="text" Placeholder="Value" name="option_val['.$rand.']['.$key1.']" class="r_val form-control" value="'.$field['option_val'][$key1].'">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <i class="fa fa-plus-circle fa-2x add_more_radio" onclick=add_more_options(1,'.$rand.')></i>
-                                                <i class="col-md-offset-1 fa fa-times-circle fa-2x remove_more_radio" onclick="remove_more_options('.$key1.','.$rand.')"></i>
-                                            </div>
-                                            </div>');
+                                                <div class="col-md-4">
+                                                    <i class="fa fa-plus-circle fa-2x add_more_radio" onclick=add_more_options(1,'.$rand.')></i>
+                                                    <i class="col-md-offset-1 fa fa-times-circle fa-2x remove_more_radio" onclick="remove_more_options('.$key1.','.$rand.')"></i>
+                                                </div>
+                                                </div>');
+                                        }
                                     }
-                                }
-                                else
-                                {
-                                    _e('<div class="row select_row_'.$rand.' " id="select_option_list">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <input type="text" Placeholder="Option" name="option['.$rand.'][0]" class="r_opt form-control">
+                                    else
+                                    {
+                                        _e('<div class="row select_row_'.$rand.' " id="select_option_list">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <input type="text" Placeholder="Option" name="option['.$rand.'][0]" class="r_opt form-control">
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                            <input type="text" Placeholder="Value" name="option_val['.$rand.'][0]" class="r_val form-control" >
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                <input type="text" Placeholder="Value" name="option_val['.$rand.'][0]" class="r_val form-control" >
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <i class="margin-top-5 fa fa-plus-circle fa-2x default_blue add_more_radio" onclick=add_more_options(1,'.$rand.')></i>
-                                        </div>
-                                    </div>');
-                                }
+                                            <div class="col-md-4">
+                                                <i class="margin-top-5 fa fa-plus-circle fa-2x default_blue add_more_radio" onclick=add_more_options(1,'.$rand.')></i>
+                                            </div>
+                                        </div>');
+                                    }
 
-                            _e('</div>
+                                _e('</div>
+                            </div>    
                             <div class="form-group">
                             <label for="class-'.$rand.'">Raw class:</label>
                             <input type="text" class="form-control" id="rw-cls-'.$rand.'" name="rw-cls['.$rand.']" value="'.(isset($field['rw-cls'])?''.$field['rw-cls'].'':"").'">

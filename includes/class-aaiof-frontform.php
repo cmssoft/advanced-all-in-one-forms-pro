@@ -15,8 +15,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             _e('</form>');
         }
         public function text($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+
             if($data['raws'] == 'yes' ){
                 $raws = '<div class="row '.$data['rw-cls'].'">';
             }else{
@@ -46,8 +47,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             }
         }
         public function description($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+
             if($data['raws'] == 'yes' ){
                 $raws = '<div class="row '.$data['rw-cls'].'">';
             }else{
@@ -71,8 +73,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             _e($rawed);
         }
         public function rating($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+
             if($data['raws'] == 'yes' ){
                 $raws = '<div class="row '.$data['rw-cls'].'">';
             }else{
@@ -122,8 +125,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             _e($rawed);
         }
         public function password($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+
             if($data['raws'] == 'yes' ){
                 $raws = '<div class="row '.$data['rw-cls'].'">';
             }else{
@@ -158,8 +162,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             _e($rawed);
         }
         public function email($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+
             if($data['raws'] == 'yes' ){
                 $raws = '<div class="row '.$data['rw-cls'].'">';
             }else{
@@ -180,8 +185,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             _e($rawed);
         }
         public function phone($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+
             if($data['raws'] == 'yes' ){
                 $raws = '<div class="row '.$data['rw-cls'].'">';
             }else{
@@ -209,8 +215,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             _e($rawed);
         }
         public function textarea($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+
             if($data['raws'] == 'yes'){
                 $raws = '<div class="row '.$data['rw-cls'].'">';
             }else{
@@ -238,8 +245,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             _e($rawed);
         }
         public function url($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+
             if($data['raws'] == 'yes' ){
                 $raws = '<div class="row '.$data['rw-cls'].'">';
             }else{
@@ -260,8 +268,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             _e($rawed);
         }
         public function date($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+
             if($data['raws'] == 'yes' ){
                 $raws = '<div class="row '.$data['rw-cls'].'">';
             }else{
@@ -282,8 +291,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             _e($rawed);
         }
         public function file($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+
             if($data['raws'] == 'yes' ){
                 $raws = '<div class="row '.$data['rw-cls'].'">';
             }else{
@@ -305,8 +315,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             _e($rawed);
         }
         public function time($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+
             if($data['raws'] == 'yes' ){
                 $raws = '<div class="row '.$data['rw-cls'].'">';
             }else{
@@ -327,8 +338,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             _e($rawed);
         }
         public function select($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+
             if($data['raws'] == 'yes' ){
                 $raws = '<div class="row '.$data['rw-cls'].'">';
             }else{
@@ -364,8 +376,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             _e($rawed);
         }
         public function radio($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+
             if($data['raws'] == 'yes' ){
                 $raws = '<div class="row '.$data['rw-cls'].'">';
             }else{
@@ -393,8 +406,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             _e($rawed);
         }
         public function checkbox($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+
             if($data['raws'] == 'yes' ){
                 $raws = '<div class="row '.$data['rw-cls'].'">';
             }else{
@@ -422,8 +436,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             _e($rawed);
         }
         public function product_title($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+
             $show_enquiry_cart_page = get_option('show_enquiry_cart_page');
             if($show_enquiry_cart_page == 1 && is_cart()){
                 global $woocommerce;
@@ -457,8 +472,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             }
         }
         public function product_url($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+
             $show_enquiry_cart_page = get_option('show_enquiry_cart_page');
             if($show_enquiry_cart_page == 1 && is_cart()){
                 global $woocommerce;
@@ -499,8 +515,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             }
         }
         public function product_price($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+
             $show_enquiry_cart_page = get_option('show_enquiry_cart_page');
             if($show_enquiry_cart_page == 1 && is_cart()){
                 global $woocommerce;
@@ -544,8 +561,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             }
         }
         public function product_qty($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+
             $show_enquiry_cart_page = get_option('show_enquiry_cart_page');
             if($show_enquiry_cart_page == 1 && is_cart()){
                 global $woocommerce;
@@ -578,8 +596,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             }
         }
         public function submit($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+
             if($data['raws'] == 'yes' ){
                 $raws = '<div class="row '.$data['rw-cls'].'">';
             }else{
@@ -629,8 +648,9 @@ if (!class_exists( 'AAIOF_Frontform')){
             _e($rawed);
         }
         public function acceptance($k,$data,$attr){
-            foreach($attr as $ky=>$vl){ $attr[$ky] = esc_html($vl);}
-            foreach($data as $ky=>$vl){ $data[$ky] = esc_html($vl);}
+            foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
+            foreach($data as $ky=>$vl){ if(!is_array($vl)){ $data[$ky] = esc_html($vl); }else{ $data[$ky] = $vl; } }
+            
             if($data['raws'] == 'yes' ){
                 $raws = '<div class="row '.$data['rw-cls'].'">';
             }else{
