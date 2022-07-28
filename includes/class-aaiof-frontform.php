@@ -10,9 +10,81 @@ if (!class_exists( 'AAIOF_Frontform')){
             _e('<form action="" method="post" id="vcf7form-'.$attr['id'].'" class="vcf7form" data-id="'.$attr['id'].'" enctype="multipart/form-data">');
             foreach($get_vcf_data as $k=>$data){
                 $type = $data['type'];
-                $this->$type($k,$data,$attr);
+                if($type!='display'){
+                    $this->$type($k,$data,$attr);
+                }
             }
             _e('</form>');
+
+            ?>
+            <script>
+            function aaiof_init_events(){
+                jQuery('.ffield').each(function(){
+                    var id_value = jQuery(this).attr('id');
+                    var id_value2 = id_value.split('-');
+                    if(id_value2.length>2){
+                        console.log('C:'+id_value2[1]+'-'+id_value2[2]);
+                    }else{
+                        console.log('C:'+id_value2[1]);
+                    }
+                });
+                jQuery('.dfield').each(function(){
+                    var condid = jQuery(this).attr('id');
+                    var condids = new Array();
+                    var condfield = jQuery(this).attr('condfield');
+                    var condmatch = jQuery(this).attr('condmatch');
+                    var condvalue = jQuery(this).attr('condvalue');
+                    if(typeof(condfield)!=="undefined" && typeof(condmatch)!=="undefined" && typeof(condvalue)!=="undefined"){
+                        /*console.log('D: '+condfield+' '+condmatch+' '+condvalue);*/                        
+                        jQuery('.ffield').each(function(){
+                            var id_value = jQuery(this).attr('id');
+                            var id_value2 = id_value.split('-');
+                            if(id_value2.length>2){
+                                /*console.log('C:'+id_value2[1]+'-'+id_value2[2]);*/
+                            }else{
+                                /*console.log('C:'+id_value2[1]);*/
+                            }
+                            if((id_value2[0]=='text' || id_value2[0]=='email') && id_value2[1]==condfield){
+                                condids.push(condid);
+                                jQuery('#'+condid).hide();
+                                /*console.log('match:'+condids);*/
+                                jQuery('#'+id_value).unbind();
+                                jQuery('#'+id_value).on("keyup change", function(e) {
+                                    if(jQuery(this).val()==condvalue){
+                                        for(k=0;k<condids.length;k++){
+                                            jQuery('#'+condids[k]).show();
+                                        }
+                                    }else{
+                                        for(k=0;k<condids.length;k++){
+                                            jQuery('#'+condids[k]).hide();
+                                        }
+                                    }
+                                });
+                            }
+                            else if(id_value2[0]=='radio' && id_value2[1]==condfield){
+                                condids.push(condid);
+                                jQuery('#'+condid).hide();
+                                /*console.log('match:'+condids);*/
+                                jQuery('#'+id_value).unbind();
+                                jQuery('#'+id_value).on("change", function(e) {
+                                    if(jQuery(this).val()==condvalue){
+                                        for(k=0;k<condids.length;k++){
+                                            jQuery('#'+condids[k]).show();
+                                        }
+                                    }else{
+                                        for(k=0;k<condids.length;k++){
+                                            jQuery('#'+condids[k]).hide();
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }   
+            aaiof_init_events();             
+            </script>                
+            <?php
         }
         public function text($k,$data,$attr){
             foreach($attr as $ky=>$vl){ if(!is_array($vl)){ $attr[$ky] = esc_html($vl); }else{ $attr[$ky] = $vl; } }
@@ -28,20 +100,41 @@ if (!class_exists( 'AAIOF_Frontform')){
             }else{
                 $rawed = '';
             }
+
+            $f_cond = '';
+            $f_param = '';
+            if(isset($data['cond']) && 
+            trim($data['cond'])=='show' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:none;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }else if(isset($data['cond']) && 
+            trim($data['cond'])=='hide' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:block;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }
+            
             if($data['max'] == '' && $data['min'] == ''){
-                _e($raws);
-                _e('<div class="col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'">');
+                _e($raws);                
+                _e('<div id="dfield-'.$k.'" class="dfield col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'" '.$f_cond.$f_param.'>');
                 _e('<div class="form-group" id="'.$data['id'].'">
-                <label for="'.$data['type'].'-'.$k.'-'.$key.'">'.$data['label'].'</label>
-                <input type="'.$data['type'].'" class="form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'-'.$key.'" placeholder="'.$data['placeholder'].'" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").'>
+                <label for="'.$data['type'].'-'.$k.'">'.$data['label'].'</label>
+                <input type="'.$data['type'].'" class="ffield '.$k.' form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'" placeholder="'.$data['placeholder'].'" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' '.$f_param.'>
                 </div></div>');
                 _e($rawed);
             }else{
                 _e($raws);
-                _e('<div class="col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'">');
+                _e('<div id="dfield-'.$k.'" class="dfield col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'" '.$f_cond.$f_param.'>');
                 _e('<div class="form-group" id="'.$data['id'].'">
-                <label for="'.$data['type'].'-'.$k.'-'.$key.'">'.$data['label'].'</label>
-                <input type="'.$data['type'].'" class="form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'-'.$key.'" placeholder="'.$data['placeholder'].'" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' maxlength = "'.$data['max'].'" minlength = "'.$data['min'].'">
+                <label for="'.$data['type'].'-'.$k.'">'.$data['label'].'</label>
+                <input type="'.$data['type'].'" class="ffield '.$k.' form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'" placeholder="'.$data['placeholder'].'" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' maxlength = "'.$data['max'].'" minlength = "'.$data['min'].'" '.$f_param.'>
                 </div></div>');
                 _e($rawed);
             }
@@ -60,8 +153,29 @@ if (!class_exists( 'AAIOF_Frontform')){
             }else{
                 $rawed = '';
             }
-            _e($raws);
-            _e('<div class="col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'">');
+
+            $f_cond = '';
+            $f_param = '';
+            if(isset($data['cond']) && 
+            trim($data['cond'])=='show' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:none;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }else if(isset($data['cond']) && 
+            trim($data['cond'])=='hide' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:block;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }
+
+            _e($raws);            
+            _e('<div id="dfield-'.$k.'" class="dfield col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'" '.$f_cond.$f_param.'>');
             _e('<div class="form-group" id="'.$data['id'].'">');
                 if($data['placeholder'] == ''){
                     _e('<p>'.$data['label'].'</p>');
@@ -87,33 +201,54 @@ if (!class_exists( 'AAIOF_Frontform')){
                 $rawed = '';
             }
             _e($raws);
-            _e('<div class="col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'">');
-            _e('<div class="form-group"><div><p for="'.$data['type'].'-'.$k.'-'.$key.'">'.$data['label'].'</p>');
+
+            $f_cond = '';
+            $f_param = '';
+            if(isset($data['cond']) && 
+            trim($data['cond'])=='show' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:none;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'" ';
+            }else if(isset($data['cond']) && 
+            trim($data['cond'])=='hide' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:block;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'" ';
+            }
+
+            _e('<div id="dfield-'.$k.'" class="dfield col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'" '.$f_cond.$f_param.'>');
+            _e('<div class="form-group"><div><p for="'.$data['type'].'-'.$k.'">'.$data['label'].'</p>');
             _e('<div class="form-group rating '.$data['class'].'" id="'.$data['id'].'">');
             _e('<label>
-                    <input type="radio" name="'.$data['type'].'-'.$k.'" value="1" '.(($data['required']=='yes')?'required="required"':"").' />
+                    <input class="ffield" type="radio" name="'.$data['type'].'-'.$k.'" value="1" '.(($data['required']=='yes')?'required="required"':"").' '.$f_param.'/>
                     <span class="icon">★</span>
                     </label>
                     <label>
-                    <input type="radio" name="'.$data['type'].'-'.$k.'" value="2" />
+                    <input class="ffield" type="radio" name="'.$data['type'].'-'.$k.'" value="2" '.$f_param.'/>
                     <span class="icon">★</span>
                     <span class="icon">★</span>
                     </label>
                     <label>
-                    <input type="radio" name="'.$data['type'].'-'.$k.'" value="3" />
+                    <input class="ffield" type="radio" name="'.$data['type'].'-'.$k.'" value="3" '.$f_param.'/>
                     <span class="icon">★</span>
                     <span class="icon">★</span>
                     <span class="icon">★</span>   
                     </label>
                     <label>
-                    <input type="radio" name="'.$data['type'].'-'.$k.'" value="4" />
+                    <input class="ffield" type="radio" name="'.$data['type'].'-'.$k.'" value="4" '.$f_param.'/>
                     <span class="icon">★</span>
                     <span class="icon">★</span>
                     <span class="icon">★</span>
                     <span class="icon">★</span>
                     </label>
                     <label>
-                    <input type="radio" name="'.$data['type'].'-'.$k.'" value="5" />
+                    <input class="ffield" type="radio" name="'.$data['type'].'-'.$k.'" value="5" '.$f_param.'/>
                     <span class="icon">★</span>
                     <span class="icon">★</span>
                     <span class="icon">★</span>
@@ -138,24 +273,45 @@ if (!class_exists( 'AAIOF_Frontform')){
             }else{
                 $rawed = '';
             }
+
+            $f_cond = '';
+            $f_param = '';
+            if(isset($data['cond']) && 
+            trim($data['cond'])=='show' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:none;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'" ';
+            }else if(isset($data['cond']) && 
+            trim($data['cond'])=='hide' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:block;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'" ';
+            }
+
             _e($raws);
-            _e('<div class="col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'">');
+            _e('<div id="dfield-'.$k.'" class="dfield col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'" '.$f_cond.$f_param.'>');
             if($data['max'] == 'yes'){   
                 if($data['min'] == ''){
                     _e('<div class="form-group" id="'.$data['id'].'">
-                    <label for="'.$data['type'].'-'.$k.'-'.$key.'">'.$data['label'].'  <span> (Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters)</span></label>
-                    <input type="password" class="form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'-'.$key.'" placeholder="'.$data['placeholder'].'" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
+                    <label for="'.$data['type'].'-'.$k.'">'.$data['label'].'  <span> (Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters)</span></label>
+                    <input type="password" class="ffield '.$k.' form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'" placeholder="'.$data['placeholder'].'" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" '.$f_param.'>
                     </div>');
                 }else{
                     _e('<div class="form-group" id="'.$data['id'].'">
-                    <label for="'.$data['type'].'-'.$k.'-'.$key.'">'.$data['label'].'  <span> (Must contain at least one number and one uppercase and lowercase letter, and at least '.$data['min'].' or more characters)</span></label>
-                    <input type="password" class="form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'-'.$key.'" placeholder="'.$data['placeholder'].'" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{'.$data['min'].',}">
+                    <label for="'.$data['type'].'-'.$k.'">'.$data['label'].'  <span> (Must contain at least one number and one uppercase and lowercase letter, and at least '.$data['min'].' or more characters)</span></label>
+                    <input type="password" class="ffield '.$k.' form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'" placeholder="'.$data['placeholder'].'" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{'.$data['min'].',}" '.$f_param.'>
                     </div>');
                 }
             }else{
                 _e('<div class="form-group" id="'.$data['id'].'">
-                <label for="'.$data['type'].'-'.$k.'-'.$key.'">'.$data['label'].'</label>
-                <input type="password" class="form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'-'.$key.'" placeholder="'.$data['placeholder'].'" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' minlength="'.$data['min'].'">
+                <label for="'.$data['type'].'-'.$k.'">'.$data['label'].'</label>
+                <input type="password" class="ffield '.$k.' form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'" placeholder="'.$data['placeholder'].'" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' minlength="'.$data['min'].'" '.$f_param.'>
                 </div>');
             }
             _e('</div>');
@@ -175,11 +331,32 @@ if (!class_exists( 'AAIOF_Frontform')){
             }else{
                 $rawed = '';
             }
+
+            $f_cond = '';
+            $f_param = '';
+            if(isset($data['cond']) && 
+            trim($data['cond'])=='show' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:none;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'" ';
+            }else if(isset($data['cond']) && 
+            trim($data['cond'])=='hide' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:block;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'" ';
+            }
+
             _e($raws);
-            _e('<div class="col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'">');
+            _e('<div id="dfield-'.$k.'" class="dfield col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'" '.$f_cond.$f_param.'>');
             _e('<div class="form-group" id="'.$data['id'].'">
-            <label for="'.$data['type'].'-'.$k.'-'.$key.'">'.$data['label'].'</label>
-            <input type="email" class="form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'-'.$key.'" placeholder="'.$data['placeholder'].'" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$">
+            <label for="'.$data['type'].'-'.$k.'">'.$data['label'].'</label>
+            <input type="email" class="ffield '.$k.' form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'" placeholder="'.$data['placeholder'].'" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$" '.$f_param.'>
             </div>');
             _e('</div>');
             _e($rawed);
@@ -198,17 +375,38 @@ if (!class_exists( 'AAIOF_Frontform')){
             }else{
                 $rawed = '';
             }
+
+            $f_cond = '';
+            $f_param = '';
+            if(isset($data['cond']) && 
+            trim($data['cond'])=='show' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:none;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }else if(isset($data['cond']) && 
+            trim($data['cond'])=='hide' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:block;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }
+
             _e($raws);
-            _e('<div class="col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'">');
+            _e('<div id="dfield-'.$k.'" class="dfield col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'" '.$f_cond.$f_param.'>');
             if($data['max'] == '' && $data['min'] == ''){
                 _e('<div class="form-group" id="'.$data['id'].'">
-                <label for="'.$data['type'].'-'.$k.'-'.$key.'">'.$data['label'].'</label>
-                <input type="tel" class="form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'-'.$key.'" placeholder="'.$data['placeholder'].'" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").'>
+                <label for="'.$data['type'].'-'.$k.'">'.$data['label'].'</label>
+                <input type="tel" class="ffield '.$k.' form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'" placeholder="'.$data['placeholder'].'" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' '.$f_param.'>
                 </div>');
             }else{
                 _e('<div class="form-group" id="'.$data['id'].'">
-                <label for="'.$data['type'].'-'.$k.'-'.$key.'">'.$data['label'].'</label>
-                <input type="tel" class="form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'-'.$key.'" placeholder="'.$data['placeholder'].'" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' maxlength = "'.$data['max'].'" minlength = "'.$data['min'].'">
+                <label for="'.$data['type'].'-'.$k.'">'.$data['label'].'</label>
+                <input type="tel" class="ffield '.$k.' form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'" placeholder="'.$data['placeholder'].'" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' maxlength = "'.$data['max'].'" minlength = "'.$data['min'].'" '.$f_param.'>
                 </div>');
             }
             _e('</div>');
@@ -228,17 +426,38 @@ if (!class_exists( 'AAIOF_Frontform')){
             }else{
                 $rawed = '';
             }
+
+            $f_cond = '';
+            $f_param = '';
+            if(isset($data['cond']) && 
+            trim($data['cond'])=='show' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:none;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }else if(isset($data['cond']) && 
+            trim($data['cond'])=='hide' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:block;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }
+
             _e($raws);
-            _e('<div class="col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'">');
+            _e('<div id="dfield-'.$k.'" class="dfield col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'" '.$f_cond.$f_param.'>');
             if($data['max'] == ''){
                 _e('<div class="form-group" id="'.$data['id'].'">
-                <label for="'.$data['type'].'-'.$k.'-'.$key.'">'.$data['label'].'</label>
-                <textarea name="'.$data['type'].'-'.$k.'" class="form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'-'.$key.'" '.(($data['required']=='yes')?'required="required"':"").' rows="'.$data['rows'].'" cols="'.$data['columns'].'"></textarea>
+                <label for="'.$data['type'].'-'.$k.'">'.$data['label'].'</label>
+                <textarea name="'.$data['type'].'-'.$k.'" class="ffield '.$k.' form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' rows="'.$data['rows'].'" cols="'.$data['columns'].'" '.$f_param.'></textarea>
                 </div>');
             }else{
                 _e('<div class="form-group" id="'.$data['id'].'">
-                <label for="'.$data['type'].'-'.$k.'-'.$key.'">'.$data['label'].'</label>
-                <textarea name="'.$data['type'].'-'.$k.'" class="form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'-'.$key.'" '.(($data['required']=='yes')?'required="required"':"").' rows="'.$data['rows'].'" cols="'.$data['columns'].'" maxlength="'.$data['max'].'"></textarea>
+                <label for="'.$data['type'].'-'.$k.'">'.$data['label'].'</label>
+                <textarea name="'.$data['type'].'-'.$k.'" class="ffield '.$k.' form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' rows="'.$data['rows'].'" cols="'.$data['columns'].'" maxlength="'.$data['max'].'" '.$f_param.'></textarea>
                 </div>');
             }
             _e('</div>');
@@ -258,11 +477,32 @@ if (!class_exists( 'AAIOF_Frontform')){
             }else{
                 $rawed = '';
             }
+
+            $f_cond = '';
+            $f_param = '';
+            if(isset($data['cond']) && 
+            trim($data['cond'])=='show' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:none;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }else if(isset($data['cond']) && 
+            trim($data['cond'])=='hide' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:block;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }
+
             _e($raws);
-            _e('<div class="col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'">');
+            _e('<div id="dfield-'.$k.'" class="dfield col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'" '.$f_cond.$f_param.'>');
             _e('<div class="form-group" id="'.$data['id'].'">
-            <label for="'.$data['type'].'-'.$k.'-'.$key.'">'.$data['label'].'</label>
-            <input type="url" class="form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'-'.$key.'" placeholder="'.$data['placeholder'].'" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").'>
+            <label for="'.$data['type'].'-'.$k.'">'.$data['label'].'</label>
+            <input type="url" class="ffield '.$k.' form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'" placeholder="'.$data['placeholder'].'" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' '.$f_param.'>
             </div>');
             _e('</div>');
             _e($rawed);
@@ -281,11 +521,32 @@ if (!class_exists( 'AAIOF_Frontform')){
             }else{
                 $rawed = '';
             }
+
+            $f_cond = '';
+            $f_param = '';
+            if(isset($data['cond']) && 
+            trim($data['cond'])=='show' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:none;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'" ';
+            }else if(isset($data['cond']) && 
+            trim($data['cond'])=='hide' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:block;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'" ';
+            }
+
             _e($raws);
-            _e('<div class="col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'">');
+            _e('<div id="dfield-'.$k.'" class="dfield col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'" '.$f_cond.$f_param.'>');
             _e('<div class="form-group" id="'.$data['id'].'">
-            <label for="'.$data['type'].'-'.$k.'-'.$key.'">'.$data['label'].'</label>
-            <input type="text" class="form-control datepicker '.$data['class'].'" id="'.$data['type'].'-'.$k.'-'.$key.'"  placeholder="MM/DD/YYYY" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").'>
+            <label for="'.$data['type'].'-'.$k.'">'.$data['label'].'</label>
+            <input type="text" class="ffield '.$k.' form-control datepicker '.$data['class'].'" id="'.$data['type'].'-'.$k.'"  placeholder="MM/DD/YYYY" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' '.$f_param.'>
             </div>');
             _e('</div>');
             _e($rawed);
@@ -304,11 +565,32 @@ if (!class_exists( 'AAIOF_Frontform')){
             }else{
                 $rawed = '';
             }
+
+            $f_cond = '';
+            $f_param = ''; 
+            if(isset($data['cond']) && 
+            trim($data['cond'])=='show' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:none;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }else if(isset($data['cond']) && 
+            trim($data['cond'])=='hide' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:block;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }
+
             _e($raws);
-            _e('<div class="col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'">');
+            _e('<div id="dfield-'.$k.'" class="dfield col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'" '.$f_cond.$f_param.'>');
             _e('<div class="form-group '.$data['class'].' add_file" id="'.$data['id'].'">
-            <label for="'.$data['type'].'-'.$k.'-'.$key.'">'.$data['label'].'</label>
-            <input type="file" class="form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'-'.$key.'"  name="'.$data['type'].'-'.$k.'" accepted="'.$data['extension'].'" data-extension="'.$data['extension'].'" data-filesize="'.$data['filesize'].'" '.(($data['required']=='yes')?'required="required"':"").' >
+            <label for="'.$data['type'].'-'.$k.'">'.$data['label'].'</label>
+            <input type="file" class="ffield '.$k.' form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'"  name="'.$data['type'].'-'.$k.'" accepted="'.$data['extension'].'" data-extension="'.$data['extension'].'" data-filesize="'.$data['filesize'].'" '.(($data['required']=='yes')?'required="required"':"").' '.$f_param.'>
             <label id="file_error" class="error"></label>
             </div>');
             _e('</div>');
@@ -328,11 +610,32 @@ if (!class_exists( 'AAIOF_Frontform')){
             }else{
                 $rawed = '';
             }
+
+            $f_cond = '';
+            $f_param = '';
+            if(isset($data['cond']) && 
+            trim($data['cond'])=='show' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:none;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }else if(isset($data['cond']) && 
+            trim($data['cond'])=='hide' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:block;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }
+
             _e($raws);
-            _e('<div class="col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'">');
+            _e('<div id="dfield-'.$k.'" class="dfield col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'" '.$f_cond.$f_param.'>');
             _e('<div class="form-group" id="'.$data['id'].'">
-            <label for="'.$data['type'].'-'.$k.'-'.$key.'">'.$data['label'].'</label>
-            <input type="text" class="form-control timepicker '.$data['class'].'" id="'.$data['type'].'-'.$k.'-'.$key.'" placeholder="HH:MM" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' readonly>
+            <label for="'.$data['type'].'-'.$k.'">'.$data['label'].'</label>
+            <input type="text" class="ffield '.$k.' form-control timepicker '.$data['class'].'" id="'.$data['type'].'-'.$k.'" placeholder="HH:MM" name="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' '.$f_param.' readonly>
             </div>');
             _e('</div>');
             _e($rawed);
@@ -351,9 +654,30 @@ if (!class_exists( 'AAIOF_Frontform')){
             }else{
                 $rawed = '';
             }
+            
+            $f_cond = '';
+            $f_param = '';
+            if(isset($data['cond']) && 
+            trim($data['cond'])=='show' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:none;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }else if(isset($data['cond']) && 
+            trim($data['cond'])=='hide' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:block;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }
+            
             $html = '<div class="form-group" id="'.$data['id'].'">
                     <label for="'.$data['type'].'-'.$k.'">'.$data['label'].'</label>
-                    <select name="'.$data['type'].'-'.$k.'" class="form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").'>
+                    <select name="'.$data['type'].'-'.$k.'" class="ffield '.$k.' form-control '.$data['class'].'" id="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' '.$f_param.'>
                         <option value="">'.$data['placeholder'].'</option>';
                         foreach($data['option'] as $key=>$value){
                             if($value != ''){   
@@ -369,8 +693,9 @@ if (!class_exists( 'AAIOF_Frontform')){
                         }
             $html .= '</select>
             </div>';
+            
             _e($raws);
-            _e('<div class="col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'">');
+            _e('<div id="dfield-'.$k.'" class="dfield col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'" '.$f_cond.$f_param.'>');
             _e($html);
             _e('</div>');
             _e($rawed);
@@ -389,18 +714,40 @@ if (!class_exists( 'AAIOF_Frontform')){
             }else{
                 $rawed = '';
             }
+            
+            $f_cond = '';
+            $f_param = ''; 
+            if(isset($data['cond']) && 
+            trim($data['cond'])=='show' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:none;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'" ';
+            }else if(isset($data['cond']) && 
+            trim($data['cond'])=='hide' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:block;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'" ';
+            }
+
             $html = '<div class="form-group radio_option '.$data['class'].'" id="'.$data['id'].'">
-            <label >'.$data['label'].'</label><div>';
+            <label>'.$data['label'].'</label><div>';
             foreach($data['option'] as $key=>$value){
                 if($value != ''){
                     $html .= '<div class="checkbox">
-                    <label for="'.$data['type'].'-'.$k.'-'.$key.'"><input type="'.$data['type'].'" value="'.$data['option_val'][$key].'" name="'.$data['type'].'-'.$k.'" id="'.$data['type'].'-'.$k.'-'.$key.'" '.(($data['required']=='yes')?'required="required"':"").'><span>'.$value.'</span></label>
+                    <label for="'.$data['type'].'-'.$k.'-'.$key.'"><input type="'.$data['type'].'" value="'.$data['option_val'][$key].'" name="'.$data['type'].'-'.$k.'" class="ffield" id="'.$data['type'].'-'.$k.'-'.$key.'" '.(($data['required']=='yes')?'required="required"':"").' '.$f_param.'><span>'.$value.'</span></label>
                     </div>';
                 }
             }
             $html .= '</div></div>';
+
             _e($raws);
-            _e('<div class="col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'">');
+            _e('<div id="dfield-'.$k.'" class="dfield col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'" '.$f_cond.$f_param.'>');
             _e($html);
             _e('</div>');
             _e($rawed);
@@ -419,18 +766,40 @@ if (!class_exists( 'AAIOF_Frontform')){
             }else{
                 $rawed = '';
             }        
-            $html .= '<div class="form-group checkbox_option '.$data['class'].'" id="'.$data['id'].'">
+            
+            $f_cond = '';
+            $f_param = '';
+            if(isset($data['cond']) && 
+            trim($data['cond'])=='show' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:none;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'" ';
+            }else if(isset($data['cond']) && 
+            trim($data['cond'])=='hide' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:block;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'" ';
+            }
+
+            $html = '<div class="form-group checkbox_option '.$data['class'].'" id="'.$data['id'].'" '.$f_cond.$f_param.'>
             <label >'.$data['label'].'</label><div>';
             foreach($data['option'] as $key=>$value){
                 if($value != ''){
                     $html .= '<div class="checkbox">
-                    <label for="'.$data['type'].'-'.$k.'-'.$key.'"><input type="'.$data['type'].'" value="'.$data['option_val'][$key].'" name="'.$data['type'].'-'.$k.'[]" id="'.$data['type'].'-'.$k.'-'.$key.'" '.(($data['required']=='yes')?'required="required"':"").'><span>'.$value.'</span></label>
+                    <label for="'.$data['type'].'-'.$k.'-'.$key.'"><input type="'.$data['type'].'" value="'.$data['option_val'][$key].'" name="'.$data['type'].'-'.$k.'[]" class="ffield" id="'.$data['type'].'-'.$k.'-'.$key.'" '.(($data['required']=='yes')?'required="required"':"").' '.$f_param.'><span>'.$value.'</span></label>
                     </div>';
                 }
             }
             $html .= '</div></div>';
+
             _e($raws);
-            _e('<div class="col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'">');
+            _e('<div id="dfield-'.$k.'" class="dfield col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'" '.$f_cond.$f_param.'>');
             _e($html);
             _e('</div>');
             _e($rawed);
@@ -609,11 +978,29 @@ if (!class_exists( 'AAIOF_Frontform')){
             }else{
                 $rawed = '';
             }
+
+            $f_cond = '';
+            if(isset($data['cond']) && 
+            trim($data['cond'])=='show' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:none;" condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'" ';
+            }else if(isset($data['cond']) && 
+            trim($data['cond'])=='hide' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:block;" condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'" ';
+            }
+
             _e($raws);
-            _e('<div class="col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'">');
+            _e('<div id="dfield-'.$k.'" class="dfield col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'" '.$f_cond.$f_param.'>');
             $message = unserialize(get_post_meta( $attr['id'], 'vcf_success_sms', true));
             $thankyou = (isset($message['thankyou']) && trim($message['thankyou'])!="")?$message['thankyou']:home_url();
-            _e('<button type="submit" class="btn btn-default  '.$data['class'].''.$data['class'].'" id="'.$data['id'].'">'.$data['label'].'</button>');
+            _e('<button type="submit" class="ffield '.$k.' btn btn-default  '.$data['class'].'" id="'.$data['type'].'-'.$k.'" '.$f_param.'>'.$data['label'].'</button>');
             _e('<img src="'.AAIOF_ADVANCE_FORM_URL.'assets/images/loading.gif" class="loader_gif" />');
             _e('<div class="form-group success-error" data-url="'.$thankyou.'">'.$message['success'].'</div>');
             _e('</div>');
@@ -635,13 +1022,34 @@ if (!class_exists( 'AAIOF_Frontform')){
             }else{
                 $rawed = '';
             }
+
+            $f_cond = '';
+            $f_param = '';
+            if(isset($data['cond']) && 
+            trim($data['cond'])=='show' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:none;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }else if(isset($data['cond']) && 
+            trim($data['cond'])=='hide' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:block;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }
+
             _e($raws);
-            _e('<div class="col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'">');
+            _e('<div id="dfield-'.$k.'" class="dfield col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'" '.$f_cond.$f_param.'>');
             $sitekey = get_option('gcaptcha_sitekey');
             $secretkey = get_option('gcaptcha_secret');
             _e('<div class="form-group" id="'.$data['id'].'">
-                <label for="'.$data['type'].'-'.$k.'-'.$key.'">'.$data['label'].'</label>
-                <div class="g-recaptcha '.$data['class'].'" id="'.$data['id'].'" data-sitekey="'.$sitekey.'" data-callback="recaptchaCallback"></div><input type="hidden" class="hiddenRecaptcha required" name="hiddenRecaptcha" id="hiddenRecaptcha">
+                <label for="'.$data['type'].'-'.$k.'">'.$data['label'].'</label>
+                <div class="g-recaptcha '.$data['class'].'" id="'.$data['id'].'" data-sitekey="'.$sitekey.'" data-callback="recaptchaCallback"></div><input type="hidden" class="ffield '.$k.' hiddenRecaptcha required" name="hiddenRecaptcha" id="hiddenRecaptcha" '.$f_param.'>
             </div>');
             _e('<div class="form-group success-error-captcha">Your Captcha response was incorrect. Please try again.</div>');
             _e('</div>');
@@ -661,12 +1069,33 @@ if (!class_exists( 'AAIOF_Frontform')){
             }else{
                 $rawed = '';
             }
+
+            $f_cond = '';
+            $f_param = '';
+            if(isset($data['cond']) && 
+            trim($data['cond'])=='show' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:none;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }else if(isset($data['cond']) && 
+            trim($data['cond'])=='hide' && 
+            isset($data['condfield']) && 
+            trim($data['condfield'])!="" && 
+            isset($data['condmatch']) && 
+            isset($data['condvalue'])){
+                $f_cond = ' style="display:block;" ';
+                $f_param = ' condfield="'.$data['condfield'].'" condmatch="'.$data['condmatch'].'" condvalue="'.$data['condvalue'].'"  ';
+            }
+
             _e($raws);
-            _e('<div class="col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'">');
+            _e('<div id="dfield-'.$k.'" class="dfield col-'.$data['col-data'].'-'.$data['col-data-num'].' '.$data['cl-cls'].'" '.$f_cond.$f_param.'>');
             _e('<div class="form-group" id="'.$data['id'].'">
             <div>
             <div class="checkbox">
-                <label for="'.$data['type'].'-'.$k.'-'.$key.'"><input type="checkbox" value="Yes" name="'.$data['type'].'-'.$k.'" id="'.$data['type'].'-'.$k.'-'.$key.'" '.(($data['required']=='yes')?'required="required"':"").'><span>'.$data['label'].'</span></label>
+                <label for="'.$data['type'].'-'.$k.'"><input class="ffield" type="checkbox" value="Yes" name="'.$data['type'].'-'.$k.'" id="'.$data['type'].'-'.$k.'" '.(($data['required']=='yes')?'required="required"':"").' '.$f_param.'><span>'.$data['label'].'</span></label>
             </div>
             </div>
             </div>');

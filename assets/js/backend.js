@@ -379,4 +379,4 @@ function cond_logic_dropdown(){
 
 setInterval(function(){
 	cond_logic_dropdown();
-},1000);
+},2000);
